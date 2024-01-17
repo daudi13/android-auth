@@ -1,13 +1,26 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
+import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 
 
-const Login = () => {
+const Login = ({navigation: {navigate}}: any) => {
   const  [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
+
+  const auth = FIREBASE_AUTH;
+
+  const signIn = async () => {
+    try {
+      const response = await signInWithEmailAndPassword(auth, email, password);
+      console.log(response)
+    } catch (error) {
+      Alert.alert("Login failed")
+    }
+  }
   
   return (
     <SafeAreaView style={styles.container}>
@@ -25,25 +38,24 @@ const Login = () => {
         <TextInput
           style={styles.input}
           value={password}
-          autoFocus={true}
           secureTextEntry
           onChangeText={(password) => setPassword(password)}
           placeholder="Password"
         />
         <TouchableOpacity style={styles.forgotPassword}><Text style={styles.linkText}>Forgot your password?</Text></TouchableOpacity>
         <TouchableOpacity style={styles.signInBtn}><Text style={styles.btnTxt}>Sign in</Text></TouchableOpacity>
-        <Text style={styles.newAccount}>Create new Account</Text>
+        <Text style={styles.newAccount} onPress={() => navigate("Register")}>Create new Account</Text>
         <Text style={styles.continue}>Or continue with</Text>
         <View style={styles.iconContainer}>
-          <View style={styles.iconBox}>
+          <TouchableOpacity style={styles.iconBox}>
             <AntDesign name="google" size={24} color="black" />
-          </View>
-          <View style={styles.iconBox}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconBox}>
             <FontAwesome5 name="facebook" size={24} color="black" />
-          </View>
-          <View style={styles.iconBox}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconBox}>
             <AntDesign name="apple1" size={24} color="black" />
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
